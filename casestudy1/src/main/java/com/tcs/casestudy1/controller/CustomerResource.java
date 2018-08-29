@@ -1,10 +1,10 @@
 package com.tcs.casestudy1.controller;
 
-import java.net.URI;
 import java.util.List;
 import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -13,20 +13,19 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
-import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
 import com.tcs.casestudy1.entity.Customer;
 import com.tcs.casestudy1.exception.CustomerNotFoundException;
 import com.tcs.casestudy1.repository.CustomerRepository;
 
 @RestController
-public class CustomerResource<StudentRepository> {
+public class CustomerResource {
 
 	@Autowired
 	private CustomerRepository customerRepository;
 
 	@GetMapping("/customer")
-	public List<Customer> retrieveAllStudents() throws CustomerNotFoundException {
+	public List<Customer> retrieveAllCustomers() throws CustomerNotFoundException {
 		List<Customer> customers = customerRepository.findAll();
 		if (customers.isEmpty()) {
 			throw new CustomerNotFoundException();
@@ -35,7 +34,7 @@ public class CustomerResource<StudentRepository> {
 	}
 
 	@GetMapping("/customer/{id}")
-	public Customer retrieveStudent(@PathVariable long id) throws CustomerNotFoundException {
+	public Customer retrieveCustomer(@PathVariable long id) throws CustomerNotFoundException {
 		Optional<Customer> customer = customerRepository.findById(id);
 		if (!customer.isPresent()) {
 			throw new CustomerNotFoundException();
@@ -44,26 +43,24 @@ public class CustomerResource<StudentRepository> {
 	}
 
 	@PostMapping("/customer")
-	public ResponseEntity<Object> createCustomer(@RequestBody Customer customer) {
+	public ResponseEntity<Customer> createCustomer(@RequestBody Customer customer) {
 		Customer savedCustomer = customerRepository.save(customer);
-		URI location = ServletUriComponentsBuilder.fromCurrentRequest().path("/{id}")
-				.buildAndExpand(savedCustomer.getCustomerId()).toUri();
-		return ResponseEntity.created(location).build();
+		return new ResponseEntity<Customer>(savedCustomer, HttpStatus.CREATED);
 	}
 
 	@PutMapping("/customer/{id}")
-	public ResponseEntity<Object> updateCustomer(@RequestBody Customer customer, @PathVariable long id) {
+	public ResponseEntity<Customer> updateCustomer(@RequestBody Customer customer, @PathVariable long id) {
 		Optional<Customer> customerOptional = customerRepository.findById(id);
 		if (!customerOptional.isPresent()) {
 			return ResponseEntity.notFound().build();
 		}
 		customer.setCustomerId(id);
 		customerRepository.save(customer);
-		return ResponseEntity.ok().build();
+		return new ResponseEntity<Customer>(customer, HttpStatus.OK);
 	}
 
 	@DeleteMapping("/customer/{id}")
-	public ResponseEntity<Object> deleteCustomer(@PathVariable long id) {
+	public ResponseEntity<Customer> deleteCustomer(@PathVariable long id) {
 		Optional<Customer> customerOptional = customerRepository.findById(id);
 		if (!customerOptional.isPresent()) {
 			return ResponseEntity.notFound().build();
