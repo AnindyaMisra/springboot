@@ -1,5 +1,5 @@
 insert into customer (customer_id, customer_name, contact_number, address, gender)
-values(10003, 'Anindya', '1234', 'Kolkata', 'M');
+values(10001, 'Ram', '1234', 'Kolkata', 'M');
 
 insert into customer (customer_id, customer_name, contact_number, address, gender)
-values(10004, 'Amit', '5678', 'Delhi', 'M');
+values(10002, 'Shyam', '5678', 'Delhi', 'M');
